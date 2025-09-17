@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block title %}구독 플랜{% endblock %}
+
+{% block content %}
+    <div class="text-center">
+        <h2>구독 플랜</h2>
+        <p class="lead">더 빠르고 정확한 알림을 위해 Premium 플랜으로 업그레이드하세요.</p>
+    </div>
+
+    <div class="row row-cols-1 row-cols-md-2 g-4 justify-content-center mt-4">
+        <div class="col">
+            <div class="card h-100">
+                <div class="card-header">
+                    <h4 class="my-0 fw-normal">Free</h4>
+                </div>
+                <div class="card-body">
+                    <h1 class="card-title pricing-card-title">₩0 <small class="text-muted fw-light">/ 평생</small></h1>
+                    <ul class="list-unstyled mt-3 mb-4">
+                        <li>✔️ 지역 기반 맞춤 추천</li>
+                        <li>✔️ 1시간 주기 알림</li>
+                        <li>❌ 상세 필터링 (나이, 소득 등)</li>
+                        <li>❌ 예상 시세차익 정보</li>
+                    </ul>
+                    {% if current_user.is_authenticated and current_user.tier == 'free' %}
+                        <button type="button" class="w-100 btn btn-lg btn-secondary" disabled>현재 플랜</button>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="card h-100 border-primary">
+                <div class="card-header bg-primary text-white border-primary">
+                    <h4 class="my-0 fw-normal">Premium</h4>
+                </div>
+                <div class="card-body">
+                    <h1 class="card-title pricing-card-title">₩9,900 <small class="text-muted fw-light">/ 월</small></h1>
+                    <ul class="list-unstyled mt-3 mb-4">
+                        <li>✔️ 지역 기반 맞춤 추천</li>
+                        <li>✔️ <strong>10분 주기</strong> 실시간 알림</li>
+                        <li>✔️ <strong>상세 필터링</strong> (나이, 소득 등)</li>
+                        <li>✔️ <strong>예상 시세차익</strong> 정보</li>
+                    </ul>
+                    {% if current_user.is_authenticated %}
+                        {% if current_user.tier == 'premium' %}
+                            <button type="button" class="w-100 btn btn-lg btn-secondary" disabled>현재 플랜</button>
+                        {% else %}
+                            <a href="{{ url_for('upgrade') }}" class="w-100 btn btn-lg btn-primary">Premium으로 업그레이드</a>
+                        {% endif %}
+                    {% else %}
+                        <a href="{{ url_for('login') }}" class="w-100 btn btn-lg btn-primary">로그인 후 시작</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

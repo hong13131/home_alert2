@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+
+{% block title %}홈 - 맞춤형 청약 알리미{% endblock %}
+
+{% block content %}
+    <div class="p-5 mb-4 bg-light rounded-3">
+        <div class="container-fluid py-5">
+            {% if current_user.is_authenticated %}
+                <h1 class="display-5 fw-bold">{{ current_user.username }}님, 안녕하세요!</h1>
+                <p class="col-md-8 fs-4">
+                    현재 회원님의 지역에 <strong>{{ recommendation_count }}개</strong>의 신청 가능 공고가 있습니다.
+                </p>
+                <a href="{{ url_for('recommendations') }}" class="btn btn-primary btn-lg">내 맞춤 추천 보기</a>
+                <a href="{{ url_for('profile') }}" class="btn btn-outline-secondary btn-lg">프로필 수정</a>
+            {% else %}
+                <h1 class="display-5 fw-bold">나에게 맞는 청약, 놓치지 마세요</h1>
+                <p class="col-md-8 fs-4">프로필을 입력하고, 신청 가능한 청약 공고를 텔레그램으로 받아보세요.</p>
+                <a href="{{ url_for('register') }}" class="btn btn-primary btn-lg">지금 시작하기</a>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <h2>지역별 청약 공고 검색</h2>
+            <div class="input-group mb-3">
+                <input type="text" id="areaInput" class="form-control" placeholder="지역명을 입력하세요 (예: 경기, 서울)">
+                <button class="btn btn-outline-secondary" type="button" id="searchBtn">검색</button>
+            </div>
+            <div id="results">
+                <!-- 청약 정보가 여기에 표시됩니다 -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('searchBtn').addEventListener('click', async () => {
+            const area = document.getElementById('areaInput').value;
+            const resultsDiv = document.getElementById('results');
+            
+            resultsDiv.innerHTML = '불러오는 중...';
+
+            if (!area) {
+                resultsDiv.innerHTML = '지역명을 입력해주세요.';
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/apartments?area=${area}`);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const result = await response.json();
+
+                if (result.data && result.data.length > 0) {
+                    resultsDiv.innerHTML = ''; // 이전 결과 초기화
+                    result.data.forEach(apt => {
+                        const aptDiv = document.createElement('div');
+                        aptDiv.className = 'card mb-3';
+
+                        const pblancUrl = apt.PBLANC_URL || '#';
+
+                        aptDiv.innerHTML = `
+                            <div class="card-body">
+                                <h5 class="card-title">${apt.HOUSE_NM}</h5>
+                                <p class="card-text"><strong>주소:</strong> ${apt.HSSPLY_ADRES}</p>
+                                <p class="card-text"><small class="text-muted">모집공고일: ${apt.RCRIT_PBLANC_DE}</small></p>
+                                <a href="${pblancUrl}" target="_blank" class="btn btn-primary">공고 보러가기</a>
+                            </div>
+                        `;
+                        resultsDiv.appendChild(aptDiv);
+                    });
+                } else {
+                    resultsDiv.innerHTML = '해당 지역의 청약 정보가 없습니다.';
+                }
+            } catch (error) {
+                console.error('Error fetching data:', error);
+                resultsDiv.innerHTML = '데이터를 불러오는 중 오류가 발생했습니다.';
+            }
+        });
+    </script>
+{% endblock %}

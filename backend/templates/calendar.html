@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block title %}청약 캘린더{% endblock %}
+
+{% block content %}
+    <h2>청약 캘린더</h2>
+    <p class="lead">전국 아파트의 주요 청약 일정을 한눈에 확인하세요.</p>
+    <div id="calendar" class="mt-4"></div>
+
+    <!-- FullCalendar JS and CSS -->
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js"></script>
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        var calendarEl = document.getElementById('calendar');
+        var calendar = new FullCalendar.Calendar(calendarEl, {
+          initialView: 'dayGridMonth',
+          headerToolbar: {
+            left: 'prev,next today',
+            center: 'title',
+            right: 'dayGridMonth,timeGridWeek,listWeek'
+          },
+          events: '/api/calendar_events' // 캘린더 데이터를 가져올 API 엔드포인트
+        });
+        calendar.render();
+      });
+    </script>
+{% endblock %}

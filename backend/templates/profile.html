@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block title %}프로필 관리{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-body">
+                <h2 class="card-title">프로필 관리</h2>
+                <p class="card-text">맞춤형 청약 정보를 받기 위해 프로필을 업데이트해주세요.</p>
+                
+                <form method="POST" action="{{ url_for('profile') }}">
+                    <div class="mb-3">
+                        <label for="email" class="form-label">이메일 주소</label>
+                        <input type="email" class="form-control" id="email" name="email" value="{{ current_user.email or '' }}">
+                    </div>
+                    <div class="mb-3">
+                        <label for="telegram_chat_id" class="form-label">텔레그램 Chat ID</label>
+                        <input type="text" class="form-control" id="telegram_chat_id" name="telegram_chat_id" value="{{ current_user.telegram_chat_id or '' }}">
+                        <div class="form-text">텔레그램 알림을 받으려면 Chat ID를 정확히 입력해주세요.</div>
+                    </div>
+        <div class="mb-3">
+            <label for="address" class="form-label">알림 받을 주소 (예: 서울시, 경기도)</label>
+            <input type="text" class="form-control" id="address" name="address" value="{{ current_user.address or '' }}" placeholder="예: 경기도 용인시">
+        </div>
+                    <button type="submit" class="btn btn-primary">프로필 저장</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

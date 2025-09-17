@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block title %}맞춤 추천 목록{% endblock %}
+
+{% block content %}
+    <h2>{{ current_user.username }}님을 위한 맞춤 추천</h2>
+    <p class="lead">회원님의 프로필을 기반으로 현재 신청 가능한 청약 목록입니다.</p>
+
+    <div class="mt-4">
+        {% if recommendations %}
+            {% for apt in recommendations %}
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            {{ apt.HOUSE_NM }}
+                            {% if apt.HOUSE_DTL_SECD_NM == '국민' %}
+                                <span class="badge bg-success">국민주택</span>
+                            {% elif apt.HOUSE_DTL_SECD_NM == '민영' %}
+                                <span class="badge bg-primary">민영주택</span>
+                            {% endif %}
+                            {% if apt.HOUSE_SECD_NM == '신혼희망타운' %}
+                                <span class="badge bg-info">신혼희망타운</span>
+                            {% endif %}
+                        </h5>
+                        <p class="card-text"><strong>주소:</strong> {{ apt.HSSPLY_ADRES }}</p>
+                        <p class="card-text"><small class="text-muted">모집공고일: {{ apt.RCRIT_PBLANC_DE }}</small></p>
+                        <a href="{{ apt.PBLANC_URL or '#' }}" target="_blank" class="btn btn-primary">공고 보러가기</a>
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <div class="alert alert-info" role="alert">
+                현재 회원님에게 추천할 만한 청약 공고가 없습니다. 프로필의 '거주지'를 입력했는지 확인해보세요.
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}
