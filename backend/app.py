@@ -34,6 +34,9 @@ if database_url:
     # 호환성 처리: postgres:// → postgresql://
     if database_url.startswith('postgres://'):
         database_url = database_url.replace('postgres://', 'postgresql://', 1)
+    # psycopg3를 사용하도록 드라이버를 명시 (기본값이 psycopg2일 수 있음)
+    if database_url.startswith('postgresql://') and '+psycopg' not in database_url:
+        database_url = database_url.replace('postgresql://', 'postgresql+psycopg://', 1)
     # Supabase 기본 SSL 요구 사항
     if 'supabase.co' in database_url and 'sslmode=' not in database_url:
         database_url = database_url + ('&' if '?' in database_url else '?') + 'sslmode=require'
