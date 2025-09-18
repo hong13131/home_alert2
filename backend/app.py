@@ -29,6 +29,11 @@ CORS(app, supports_credentials=True, origins=[os.environ.get('FRONTEND_ORIGIN', 
 
 # --- 설정 ---
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'a-very-secret-key')
+# 크로스 사이트에서 쿠키 전송 허용을 위한 설정 (Vercel → Render 요청)
+app.config['SESSION_COOKIE_SAMESITE'] = 'None'
+app.config['SESSION_COOKIE_SECURE'] = True
+app.config['REMEMBER_COOKIE_SAMESITE'] = 'None'
+app.config['REMEMBER_COOKIE_SECURE'] = True
 # DATABASE_URL이 있으면 우선 사용, 없으면 로컬 SQLite로 폴백
 database_url = os.environ.get('DATABASE_URL')
 if database_url:
