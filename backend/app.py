@@ -24,7 +24,8 @@ project_root = os.path.abspath(os.path.join(backend_dir, '..'))
 # 현재 파일의 절대 경로를 기준으로 static_folder의 절대 경로를 계산합니다.
 static_folder_path = os.path.join(project_root, 'frontend', 'dist')
 app = Flask(__name__, static_folder=static_folder_path, static_url_path='/')
-CORS(app, supports_credentials=True)
+# CORS: 프론트 도메인만 허용 (기본은 로컬 개발 도메인)
+CORS(app, supports_credentials=True, origins=[os.environ.get('FRONTEND_ORIGIN', 'http://localhost:5173')])
 
 # --- 설정 ---
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'a-very-secret-key')
@@ -49,7 +50,7 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 API_KEY = os.environ.get('CHUNGYAK_API_KEY')
 KAKAO_REST_API_KEY = os.environ.get('KAKAO_REST_API_KEY')
 KAKAO_CLIENT_SECRET = os.environ.get('KAKAO_CLIENT_SECRET')
-KAKAO_REDIRECT_URI = 'http://localhost:5001/api/kakao/callback'
+KAKAO_REDIRECT_URI = os.environ.get('KAKAO_REDIRECT_URI', 'http://localhost:5001/api/kakao/callback')
 FRONTEND_ORIGIN = os.environ.get('FRONTEND_ORIGIN', 'http://localhost:5173')
 TELEGRAM_BOT_TOKEN = os.environ.get('TELEGRAM_BOT_TOKEN')
 
