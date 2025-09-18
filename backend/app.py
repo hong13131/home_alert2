@@ -60,7 +60,10 @@ FRONTEND_ORIGIN = os.environ.get('FRONTEND_ORIGIN', 'http://localhost:5173')
 TELEGRAM_BOT_TOKEN = os.environ.get('TELEGRAM_BOT_TOKEN')
 
 # --- 확장 ---
-db = SQLAlchemy(app)
+db = SQLAlchemy(app, engine_options={
+    'pool_pre_ping': True,
+    'pool_recycle': 180,
+})
 login_manager = LoginManager(app)
 
 # --- 모델 ---

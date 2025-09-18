@@ -1,16 +1,22 @@
-import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, Outlet, Navigate } from 'react-router-dom';
-import { Settings } from 'lucide-react';
+import React, { useState, useEffect } from "react";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Outlet,
+  Navigate,
+} from "react-router-dom";
+import { Settings } from "lucide-react";
 
-import BottomNav from './components/BottomNav';
-import HomeScreen from './pages/HomeScreen';
-import CalendarScreen from './pages/CalendarScreen';
-import NotificationScreen from './pages/NotificationScreen';
-import ProfileScreen from './pages/ProfileScreen';
-import LoginPage from './pages/LoginPage';
-import RegisterPage from './pages/RegisterPage';
-import KakaoRegisterPage from './pages/KakaoRegisterPage';
-import UrgentSalesPage from './pages/UrgentSalesPage';
+import BottomNav from "./components/BottomNav";
+import HomeScreen from "./pages/HomeScreen";
+import CalendarScreen from "./pages/CalendarScreen";
+import NotificationScreen from "./pages/NotificationScreen";
+import ProfileScreen from "./pages/ProfileScreen";
+import LoginPage from "./pages/LoginPage";
+import RegisterPage from "./pages/RegisterPage";
+import KakaoRegisterPage from "./pages/KakaoRegisterPage";
+import UrgentSalesPage from "./pages/UrgentSalesPage";
 
 // 로그인해야만 접근 가능한 페이지들을 위한 보호막
 const ProtectedRoute = ({ isLoggedIn }) => {
@@ -45,7 +51,10 @@ function App() {
   useEffect(() => {
     const checkSession = async () => {
       try {
-        const response = await fetch('/api/session_check');
+        const apiBase = import.meta.env.VITE_API_BASE_URL || "";
+        const response = await fetch(`${apiBase}/api/session_check`, {
+          credentials: "include",
+        });
         const data = await response.json();
         setIsLoggedIn(data.is_logged_in);
       } catch (error) {
