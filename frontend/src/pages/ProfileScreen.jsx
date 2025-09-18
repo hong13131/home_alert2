@@ -1,26 +1,29 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 const ProfileScreen = () => {
   const navigate = useNavigate();
   const [profile, setProfile] = useState({
-    username: '',
-    address: '',
-    email: '',
-    telegram_chat_id: '',
+    username: "",
+    address: "",
+    email: "",
+    telegram_chat_id: "",
   });
-  const [message, setMessage] = useState('');
+  const [message, setMessage] = useState("");
 
   useEffect(() => {
     const fetchProfile = async () => {
+      const apiBase = import.meta.env.VITE_API_BASE_URL || "";
       try {
-        const response = await fetch('/api/profile');
+        const response = await fetch(`${apiBase}/api/profile`, {
+          credentials: "include",
+        });
         if (response.ok) {
           const data = await response.json();
           setProfile(data);
         }
       } catch (error) {
-        console.error('Failed to fetch profile', error);
+        console.error("Failed to fetch profile", error);
       }
     };
     fetchProfile();
@@ -28,39 +31,45 @@ const ProfileScreen = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setProfile(prev => ({ ...prev, [name]: value }));
+    setProfile((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setMessage('');
+    setMessage("");
     try {
-      const response = await fetch('/api/profile', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const apiBase = import.meta.env.VITE_API_BASE_URL || "";
+      const response = await fetch(`${apiBase}/api/profile`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
         body: JSON.stringify({
           address: profile.address,
           email: profile.email,
-          telegram_chat_id: profile.telegram_chat_id
+          telegram_chat_id: profile.telegram_chat_id,
         }),
       });
       const data = await response.json();
       if (response.ok) {
-        setMessage('프로필이 성공적으로 업데이트되었습니다.');
+        setMessage("프로필이 성공적으로 업데이트되었습니다.");
       } else {
-        setMessage(data.message || '업데이트에 실패했습니다.');
+        setMessage(data.message || "업데이트에 실패했습니다.");
       }
     } catch (err) {
-      setMessage('서버와 통신 중 오류가 발생했습니다.');
+      setMessage("서버와 통신 중 오류가 발생했습니다.");
     }
   };
 
   const handleLogout = async () => {
     try {
-      await fetch('/api/logout', { method: 'POST' });
-      window.location.href = '/login';
+      const apiBase = import.meta.env.VITE_API_BASE_URL || "";
+      await fetch(`${apiBase}/api/logout`, {
+        method: "POST",
+        credentials: "include",
+      });
+      window.location.href = "/login";
     } catch (error) {
-      console.error('Logout failed', error);
+      console.error("Logout failed", error);
     }
   };
 
@@ -68,7 +77,11 @@ const ProfileScreen = () => {
     <div className="space-y-6">
       <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
         <h3 className="text-lg font-semibold mb-4">프로필 관리</h3>
-        {message && <p className="bg-green-100 text-green-700 p-3 rounded mb-4">{message}</p>}
+        {message && (
+          <p className="bg-green-100 text-green-700 p-3 rounded mb-4">
+            {message}
+          </p>
+        )}
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
             <label className="block text-gray-600 mb-2">사용자 이름</label>
@@ -80,34 +93,43 @@ const ProfileScreen = () => {
             />
           </div>
           <div className="mb-4">
-            <label className="block text-gray-600 mb-2" htmlFor="email">이메일</label>
+            <label className="block text-gray-600 mb-2" htmlFor="email">
+              이메일
+            </label>
             <input
               type="email"
               id="email"
               name="email"
               className="w-full px-3 py-2 border rounded-lg"
-              value={profile.email || ''}
+              value={profile.email || ""}
               onChange={handleChange}
             />
           </div>
           <div className="mb-4">
-            <label className="block text-gray-600 mb-2" htmlFor="telegram_chat_id">텔레그램 Chat ID</label>
+            <label
+              className="block text-gray-600 mb-2"
+              htmlFor="telegram_chat_id"
+            >
+              텔레그램 Chat ID
+            </label>
             <input
               type="text"
               id="telegram_chat_id"
               name="telegram_chat_id"
               className="w-full px-3 py-2 border rounded-lg"
-              value={profile.telegram_chat_id || ''}
+              value={profile.telegram_chat_id || ""}
               onChange={handleChange}
             />
           </div>
           <div className="mb-4">
-            <label className="block text-gray-600 mb-2" htmlFor="address">거주지역</label>
+            <label className="block text-gray-600 mb-2" htmlFor="address">
+              거주지역
+            </label>
             <select
               id="address"
               name="address"
               className="w-full px-3 py-2 border rounded-lg"
-              value={profile.address || ''}
+              value={profile.address || ""}
               onChange={handleChange}
             >
               <option value="">지역 선택</option>
@@ -131,14 +153,17 @@ const ProfileScreen = () => {
               <option value="제주">제주특별자치도</option>
             </select>
           </div>
-          <button type="submit" className="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600">
+          <button
+            type="submit"
+            className="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600"
+          >
             저장하기
           </button>
         </form>
       </div>
 
       <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
-        <button 
+        <button
           onClick={handleLogout}
           className="w-full bg-red-500 text-white py-2 rounded-lg hover:bg-red-600"
         >
